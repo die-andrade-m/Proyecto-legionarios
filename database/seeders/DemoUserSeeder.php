@@ -38,6 +38,17 @@ class DemoUserSeeder extends Seeder
         );
         $admin->roles()->sync([$adminRole->id]);
 
+        $admin2 = User::firstOrCreate(
+            ['email' => 'admin@admin.com'],
+            [
+                'name' => 'Administrador Principal',
+                'password' => Hash::make('password'),
+                'phone' => '+56911111112',
+                'is_active' => true,
+            ]
+        );
+        $admin2->roles()->sync([$adminRole->id]);
+
         // 2. Trainer
         $trainer = User::firstOrCreate(
             ['email' => 'entrenador@gym.com'],
