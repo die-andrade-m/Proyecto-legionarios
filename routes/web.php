@@ -39,16 +39,9 @@ Route::get('/run-migrations-legionarios', function () {
         ]);
         $seedOutput = \Illuminate\Support\Facades\Artisan::output();
 
-        return response()->json([
-            'status' => 'success',
-            'migrate' => $migrateOutput,
-            'seed' => $seedOutput,
-        ]);
+        return "<pre>MIGRATE:\n" . htmlspecialchars($migrateOutput) . "\n\nSEED:\n" . htmlspecialchars($seedOutput) . "</pre>";
     } catch (\Throwable $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => $e->getMessage(),
-        ], 500);
+        return "<pre>ERROR: " . htmlspecialchars($e->getMessage()) . "\n" . htmlspecialchars($e->getTraceAsString()) . "</pre>";
     }
 })->withoutMiddleware([
     \Illuminate\Session\Middleware\StartSession::class,
