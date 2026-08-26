@@ -1,17 +1,17 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="row g-4">
+<div class="row g-3 g-md-4">
     <!-- Page Header -->
     <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
             <div>
-                <h3 class="text-white mb-1">Gestión de Usuarios</h3>
-                <p class="text-secondary mb-0">Administra cuentas, asigna roles, entrenadores y membresías.</p>
+                <h4 class="text-white mb-0 font-heading">Gestión de Usuarios</h4>
+                <p class="text-secondary small mb-0">Administra cuentas, asigna roles, entrenadores y membresías.</p>
             </div>
             
-            <button type="button" class="btn btn-premium d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#createUserModal">
-                <i data-lucide="user-plus" style="width: 18px;"></i>
+            <button type="button" class="btn btn-premium btn-sm d-flex align-items-center justify-content-center gap-2 w-100 w-sm-auto py-2 px-3" data-bs-toggle="modal" data-bs-target="#createUserModal">
+                <i data-lucide="user-plus" style="width: 16px; height: 16px;"></i>
                 <span>Nuevo Usuario</span>
             </button>
         </div>
@@ -19,19 +19,19 @@
 
     <!-- Filters Section -->
     <div class="col-12">
-        <div class="glass-card p-3 d-flex flex-wrap gap-2 justify-content-between align-items-center">
-            <div class="d-flex gap-2">
-                <a href="{{ route('admin.users.index', ['role' => 'student']) }}" class="btn btn-sm {{ $roleFilter === 'student' ? 'btn-primary' : 'btn-dark bg-opacity-40 text-secondary' }} px-3 py-2 rounded-3">
+        <div class="glass-card p-3 d-flex flex-column flex-sm-row gap-2 justify-content-between align-items-stretch align-items-sm-center">
+            <div class="d-flex gap-2 overflow-auto pb-1 pb-sm-0">
+                <a href="{{ route('admin.users.index', ['role' => 'student']) }}" class="btn btn-sm {{ $roleFilter === 'student' ? 'btn-primary' : 'btn-dark bg-opacity-40 text-secondary' }} px-3 py-2 rounded-3 text-nowrap">
                     Alumnos
                 </a>
-                <a href="{{ route('admin.users.index', ['role' => 'trainer']) }}" class="btn btn-sm {{ $roleFilter === 'trainer' ? 'btn-primary' : 'btn-dark bg-opacity-40 text-secondary' }} px-3 py-2 rounded-3">
+                <a href="{{ route('admin.users.index', ['role' => 'trainer']) }}" class="btn btn-sm {{ $roleFilter === 'trainer' ? 'btn-primary' : 'btn-dark bg-opacity-40 text-secondary' }} px-3 py-2 rounded-3 text-nowrap">
                     Entrenadores
                 </a>
-                <a href="{{ route('admin.users.index', ['role' => 'admin']) }}" class="btn btn-sm {{ $roleFilter === 'admin' ? 'btn-primary' : 'btn-dark bg-opacity-40 text-secondary' }} px-3 py-2 rounded-3">
+                <a href="{{ route('admin.users.index', ['role' => 'admin']) }}" class="btn btn-sm {{ $roleFilter === 'admin' ? 'btn-primary' : 'btn-dark bg-opacity-40 text-secondary' }} px-3 py-2 rounded-3 text-nowrap">
                     Administradores
                 </a>
             </div>
-            <span class="text-secondary small">Mostrando {{ $users->count() }} usuarios</span>
+            <span class="text-secondary small text-nowrap">Total: {{ $users->count() }} usuarios</span>
         </div>
     </div>
 

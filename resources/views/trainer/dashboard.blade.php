@@ -1,81 +1,90 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="row g-4">
+<div class="row g-3 g-md-4">
     <!-- Header Page -->
     <div class="col-12">
         <div>
-            <h3 class="text-white mb-1">Mi Panel de Entrenador</h3>
-            <p class="text-secondary mb-0">Monitorea la asistencia, membresías y evolución de tus alumnos.</p>
+            <h4 class="text-white mb-1 font-heading">Mi Panel de Entrenador</h4>
+            <p class="text-secondary small mb-0">Monitorea la asistencia, membresías y evolución de tus alumnos.</p>
         </div>
     </div>
 
-    <!-- Counters Row -->
-    <div class="col-md-4">
-        <div class="glass-card p-4 h-100 d-flex align-items-center justify-content-between">
+    <!-- Counters Row (2x2 grid on mobile) -->
+    <div class="col-6 col-md-4">
+        <div class="glass-card p-3 p-md-4 h-100 d-flex flex-column justify-content-between">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+                <span class="text-secondary small" style="font-size: 11px;">Alumnos Activos</span>
+                <div class="p-2 rounded bg-primary bg-opacity-10 text-primary">
+                    <i data-lucide="users" style="width: 18px; height: 18px;"></i>
+                </div>
+            </div>
             <div>
-                <span class="text-secondary small d-block mb-1">Alumnos Activos</span>
-                <span class="display-4 stat-value text-white">{{ $activeStudentsCount }}</span>
-            </div>
-            <div class="p-3 rounded bg-primary bg-opacity-10 text-primary">
-                <i data-lucide="users" style="width: 32px; height: 32px;"></i>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="glass-card p-4 h-100 d-flex align-items-center justify-content-between">
-            <div>
-                <span class="text-secondary small d-block mb-1">Asistencias de Hoy</span>
-                <span class="display-4 stat-value text-white">{{ $todayAttendances->count() }}</span>
-            </div>
-            <div class="p-3 rounded bg-success bg-opacity-10 text-success">
-                <i data-lucide="calendar-check" style="width: 32px; height: 32px;"></i>
+                <span class="stat-value text-white d-block" style="font-size: 1.35rem;">{{ $activeStudentsCount }}</span>
+                <small class="text-secondary" style="font-size: 10px;">Asignados</small>
             </div>
         </div>
     </div>
 
-    <div class="col-md-4">
-        <div class="glass-card p-4 h-100 d-flex align-items-center justify-content-between">
-            <div>
-                <span class="text-secondary small d-block mb-1">Alumnos Ausentes (+7 días)</span>
-                <span class="display-4 stat-value text-white">{{ $inactiveStudents->count() }}</span>
+    <div class="col-6 col-md-4">
+        <div class="glass-card p-3 p-md-4 h-100 d-flex flex-column justify-content-between">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+                <span class="text-secondary small" style="font-size: 11px;">Asistencias Hoy</span>
+                <div class="p-2 rounded bg-success bg-opacity-10 text-success">
+                    <i data-lucide="calendar-check" style="width: 18px; height: 18px;"></i>
+                </div>
             </div>
-            <div class="p-3 rounded bg-warning bg-opacity-10 text-warning">
-                <i data-lucide="user-x" style="width: 32px; height: 32px;"></i>
+            <div>
+                <span class="stat-value text-white d-block" style="font-size: 1.35rem;">{{ $todayAttendances->count() }}</span>
+                <small class="text-secondary" style="font-size: 10px;">Registradas</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+        <div class="glass-card p-3 p-md-4 h-100 d-flex flex-column justify-content-between">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+                <span class="text-secondary small" style="font-size: 11px;">Ausentes (+7 días)</span>
+                <div class="p-2 rounded bg-warning bg-opacity-10 text-warning">
+                    <i data-lucide="user-x" style="width: 18px; height: 18px;"></i>
+                </div>
+            </div>
+            <div>
+                <span class="stat-value text-white d-block" style="font-size: 1.35rem;">{{ $inactiveStudents->count() }}</span>
+                <small class="text-secondary" style="font-size: 10px;">Requieren seguimiento</small>
             </div>
         </div>
     </div>
 
     <!-- Today's Attendance list -->
-    <div class="col-lg-6">
-        <div class="glass-card p-4 h-100">
-            <h5 class="text-white mb-4">Ingresos de Hoy</h5>
+    <div class="col-12 col-lg-6">
+        <div class="glass-card p-3 p-md-4 h-100">
+            <h6 class="text-white mb-3 font-heading">Ingresos de Hoy</h6>
             
-            <div class="d-flex flex-column gap-3 overflow-auto" style="max-height: 400px;">
+            <div class="d-flex flex-column gap-2 overflow-auto" style="max-height: 350px;">
                 @forelse($todayAttendances as $att)
-                    <div class="p-3 rounded bg-dark bg-opacity-40 border border-secondary border-opacity-10 d-flex align-items-center justify-content-between">
-                        <div class="d-flex align-items-center gap-3">
-                            <img src="{{ $att->user->avatar_url }}" alt="Profile" class="rounded-circle" style="width: 44px; height: 44px; object-fit: cover;">
-                            <div>
-                                <h6 class="text-white mb-0 font-heading">
-                                    <a href="{{ route('trainer.students.show', $att->user) }}" class="text-white text-decoration-none hover-primary">
+                    <div class="p-2 p-md-3 rounded bg-dark bg-opacity-40 border border-secondary border-opacity-10 d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2 overflow-hidden me-2">
+                            <img src="{{ $att->user->avatar_url }}" alt="Profile" class="rounded-circle flex-shrink-0" style="width: 36px; height: 36px; object-fit: cover;">
+                            <div class="overflow-hidden">
+                                <h6 class="text-white mb-0 font-heading small text-truncate">
+                                    <a href="{{ route('trainer.students.show', $att->user) }}" class="text-white text-decoration-none">
                                         {{ $att->user->name }}
                                     </a>
                                 </h6>
-                                <small class="text-secondary">{{ $att->user->email }}</small>
+                                <small class="text-secondary" style="font-size: 11px;">{{ $att->user->email }}</small>
                             </div>
                         </div>
-                        <div class="text-end">
-                            <span class="badge bg-primary bg-opacity-25 text-primary">
-                                <i data-lucide="clock" class="me-1" style="width: 12px; vertical-align: middle;"></i>
+                        <div class="text-end flex-shrink-0">
+                            <span class="badge bg-primary bg-opacity-25 text-primary" style="font-size: 10px;">
+                                <i data-lucide="clock" class="me-1" style="width: 10px; vertical-align: middle;"></i>
                                 {{ $att->checked_in_at->format('H:i') }}
                             </span>
                         </div>
                     </div>
                 @empty
-                    <div class="text-center py-5 my-auto text-secondary">
-                        <i data-lucide="calendar-days" class="mb-2" style="width: 48px; height: 48px;"></i>
+                    <div class="text-center py-4 my-auto text-secondary">
+                        <i data-lucide="calendar-days" class="mb-2" style="width: 36px; height: 36px;"></i>
                         <p class="mb-0 small">Aún no hay asistencias registradas hoy.</p>
                     </div>
                 @endforelse
@@ -84,97 +93,39 @@
     </div>
 
     <!-- Inactive Students Alerts -->
-    <div class="col-lg-6">
-        <div class="glass-card p-4 h-100">
-            <h5 class="text-white mb-4">Faltan Frecuentemente (Alertas)</h5>
+    <div class="col-12 col-lg-6">
+        <div class="glass-card p-3 p-md-4 h-100">
+            <h6 class="text-white mb-3 font-heading">Faltan Frecuentemente (Alertas)</h6>
             
-            <div class="d-flex flex-column gap-3 overflow-auto" style="max-height: 400px;">
+            <div class="d-flex flex-column gap-2 overflow-auto" style="max-height: 350px;">
                 @forelse($inactiveStudents as $student)
                     @php
                         $lastAttendance = $student->attendances->first();
                     @endphp
-                    <div class="p-3 rounded bg-warning bg-opacity-10 border border-warning border-opacity-20 d-flex align-items-center justify-content-between">
-                        <div class="d-flex align-items-center gap-3">
-                            <img src="{{ $student->avatar_url }}" alt="Profile" class="rounded-circle" style="width: 44px; height: 44px; object-fit: cover;">
-                            <div>
-                                <h6 class="text-white mb-0 font-heading">
+                    <div class="p-2 p-md-3 rounded bg-warning bg-opacity-10 border border-warning border-opacity-20 d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2 overflow-hidden me-2">
+                            <img src="{{ $student->avatar_url }}" alt="Profile" class="rounded-circle flex-shrink-0" style="width: 36px; height: 36px; object-fit: cover;">
+                            <div class="overflow-hidden">
+                                <h6 class="text-white mb-0 font-heading small text-truncate">
                                     <a href="{{ route('trainer.students.show', $student) }}" class="text-white text-decoration-none">
                                         {{ $student->name }}
                                     </a>
                                 </h6>
-                                <small class="text-secondary">
-                                    Última vez: 
-                                    <strong>
-                                        {{ $lastAttendance ? $lastAttendance->checked_in_at->format('d/m/Y') : 'Nunca ha asistido' }}
-                                    </strong>
+                                <small class="text-secondary" style="font-size: 11px;">
+                                    Última vez: {{ $lastAttendance ? $lastAttendance->checked_in_at->diffForHumans() : 'Nunca' }}
                                 </small>
                             </div>
                         </div>
-                        <div class="text-end">
-                            @if($lastAttendance)
-                                <span class="badge bg-danger">{{ now()->diffInDays($lastAttendance->checked_in_at) }} días ausente</span>
-                            @else
-                                <span class="badge bg-danger">Nunca asistió</span>
-                            @endif
-                        </div>
+                        <a href="{{ route('trainer.students.show', $student) }}" class="btn btn-sm btn-outline-warning text-nowrap py-1 px-2 flex-shrink-0" style="font-size: 11px;">
+                            Ver Ficha
+                        </a>
                     </div>
                 @empty
-                    <div class="text-center py-5 my-auto text-secondary">
-                        <i data-lucide="check-circle" class="text-success mb-2" style="width: 48px; height: 48px;"></i>
-                        <p class="mb-0 small">¡Excelente! Todos tus alumnos han asistido esta semana.</p>
+                    <div class="text-center py-4 my-auto text-secondary">
+                        <i data-lucide="smile" class="text-success mb-2" style="width: 36px; height: 36px;"></i>
+                        <p class="mb-0 small">¡Excelente! Todos tus alumnos están asistiendo con frecuencia.</p>
                     </div>
                 @endforelse
-            </div>
-        </div>
-    </div>
-
-    <!-- Expiring Memberships -->
-    <div class="col-12">
-        <div class="glass-card p-4">
-            <h5 class="text-white mb-4">Membresías Próximas a Vencer (Tus Alumnos)</h5>
-            
-            <div class="table-responsive">
-                <table class="table table-dark table-hover mb-0 align-middle">
-                    <thead>
-                        <tr class="text-secondary">
-                            <th>Alumno</th>
-                            <th>Plan Activo</th>
-                            <th>Fecha de Término</th>
-                            <th>Días Restantes</th>
-                            <th>Estado</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($expiringMemberships as $mb)
-                            <tr class="text-white">
-                                <td class="fw-bold">
-                                    <div class="d-flex align-items-center gap-2">
-                                        <img src="{{ $mb->user->avatar_url }}" alt="Profile" class="rounded-circle" style="width: 32px; height: 32px; object-fit: cover;">
-                                        <span>{{ $mb->user->name }}</span>
-                                    </div>
-                                </td>
-                                <td>{{ $mb->plan->name }}</td>
-                                <td>{{ $mb->end_date->format('d/m/Y') }}</td>
-                                <td class="stat-value text-warning">{{ $mb->days_remaining }} días</td>
-                                <td>
-                                    <span class="badge bg-warning bg-opacity-25 text-warning">
-                                        Por vencer
-                                    </span>
-                                </td>
-                                <td>
-                                    <a href="{{ route('trainer.students.show', $mb->user) }}" class="btn btn-sm btn-premium py-1 px-3">
-                                        Ver Perfil
-                                    </a>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="6" class="text-center py-4 text-secondary">No hay membresías asignadas por vencer en los próximos 10 días.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
             </div>
         </div>
     </div>
