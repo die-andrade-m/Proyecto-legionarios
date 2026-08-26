@@ -1,5 +1,22 @@
 <?php
 
+// Sanitize environment variables (remove UTF-8 BOM, whitespace, quotes)
+foreach (['APP_KEY', 'APP_ENV', 'APP_DEBUG', 'DB_CONNECTION', 'DB_HOST', 'DB_PORT', 'DB_DATABASE', 'DB_USERNAME', 'DB_PASSWORD', 'DB_URL'] as $var) {
+    $val = getenv($var);
+    if ($val === false && isset($_ENV[$var])) {
+        $val = $_ENV[$var];
+    }
+    if ($val === false && isset($_SERVER[$var])) {
+        $val = $_SERVER[$var];
+    }
+    if ($val !== false && $val !== null && is_string($val)) {
+        $cleanVal = trim(preg_replace('/^\xEF\xBB\xBF/', '', $val));
+        putenv("{$var}={$cleanVal}");
+        $_ENV[$var] = $cleanVal;
+        $_SERVER[$var] = $cleanVal;
+    }
+}
+
 // Configure Vercel serverless environment paths to writable /tmp
 putenv('VIEW_COMPILED_PATH=/tmp/views');
 putenv('APP_STORAGE=/tmp/storage');
