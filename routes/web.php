@@ -29,17 +29,13 @@ Route::get('/', function () {
 // Database Migration & Seeding Endpoint for Serverless
 Route::get('/run-migrations-legionarios', function () {
     try {
-        \Illuminate\Support\Facades\Artisan::call('migrate', [
+        \Illuminate\Support\Facades\Artisan::call('migrate:fresh', [
             '--force' => true,
+            '--seed' => true,
         ]);
-        $migrateOutput = \Illuminate\Support\Facades\Artisan::output();
+        $output = \Illuminate\Support\Facades\Artisan::output();
 
-        \Illuminate\Support\Facades\Artisan::call('db:seed', [
-            '--force' => true,
-        ]);
-        $seedOutput = \Illuminate\Support\Facades\Artisan::output();
-
-        return "<pre>MIGRATE:\n" . htmlspecialchars($migrateOutput) . "\n\nSEED:\n" . htmlspecialchars($seedOutput) . "</pre>";
+        return "<pre>SUCCESS:\n" . htmlspecialchars($output) . "</pre>";
     } catch (\Throwable $e) {
         return "<pre>ERROR: " . htmlspecialchars($e->getMessage()) . "\n" . htmlspecialchars($e->getTraceAsString()) . "</pre>";
     }
