@@ -29,34 +29,56 @@ Route::get('/', function () {
 // Database Migration & Seeding Endpoint for Serverless
 Route::get('/run-migrations-legionarios', function () {
     try {
-        // 1. Direct PostgreSQL DDL execution
+        // Drop existing tables to rebuild cleanly
         \Illuminate\Support\Facades\DB::unprepared("
-            CREATE TABLE IF NOT EXISTS users (
+            DROP TABLE IF EXISTS user_achievements CASCADE;
+            DROP TABLE IF EXISTS achievements CASCADE;
+            DROP TABLE IF EXISTS weight_logs CASCADE;
+            DROP TABLE IF EXISTS user_routines CASCADE;
+            DROP TABLE IF EXISTS observations CASCADE;
+            DROP TABLE IF EXISTS routine_day_exercises CASCADE;
+            DROP TABLE IF EXISTS routine_days CASCADE;
+            DROP TABLE IF EXISTS routines CASCADE;
+            DROP TABLE IF EXISTS exercises CASCADE;
+            DROP TABLE IF EXISTS progress_photos CASCADE;
+            DROP TABLE IF EXISTS body_stats CASCADE;
+            DROP TABLE IF EXISTS attendances CASCADE;
+            DROP TABLE IF EXISTS memberships CASCADE;
+            DROP TABLE IF EXISTS membership_plans CASCADE;
+            DROP TABLE IF EXISTS user_roles CASCADE;
+            DROP TABLE IF EXISTS roles CASCADE;
+            DROP TABLE IF EXISTS cache_locks CASCADE;
+            DROP TABLE IF EXISTS cache CASCADE;
+            DROP TABLE IF EXISTS sessions CASCADE;
+            DROP TABLE IF EXISTS password_reset_tokens CASCADE;
+            DROP TABLE IF EXISTS users CASCADE;
+
+            CREATE TABLE users (
                 id BIGSERIAL PRIMARY KEY,
                 name VARCHAR(255) NOT NULL,
                 email VARCHAR(255) UNIQUE NOT NULL,
                 email_verified_at TIMESTAMP NULL,
                 password VARCHAR(255) NOT NULL,
-                phone VARCHAR(255) NULL,
-                emergency_contact_name VARCHAR(255) NULL,
-                emergency_contact_phone VARCHAR(255) NULL,
+                phone VARCHAR(20) NULL,
+                avatar VARCHAR(255) NULL,
                 birth_date DATE NULL,
-                blood_type VARCHAR(10) NULL,
-                medical_notes TEXT NULL,
-                is_active BOOLEAN DEFAULT true,
-                avatar_url VARCHAR(255) NULL,
+                objective TEXT NULL,
+                trainer_id BIGINT NULL,
+                is_active SMALLINT DEFAULT 1,
+                emergency_contact_name VARCHAR(255) NULL,
+                emergency_contact_phone VARCHAR(20) NULL,
                 remember_token VARCHAR(100) NULL,
                 created_at TIMESTAMP NULL,
                 updated_at TIMESTAMP NULL
             );
 
-            CREATE TABLE IF NOT EXISTS password_reset_tokens (
+            CREATE TABLE password_reset_tokens (
                 email VARCHAR(255) PRIMARY KEY,
                 token VARCHAR(255) NOT NULL,
                 created_at TIMESTAMP NULL
             );
 
-            CREATE TABLE IF NOT EXISTS sessions (
+            CREATE TABLE sessions (
                 id VARCHAR(255) PRIMARY KEY,
                 user_id BIGINT NULL,
                 ip_address VARCHAR(45) NULL,
@@ -64,22 +86,22 @@ Route::get('/run-migrations-legionarios', function () {
                 payload TEXT NOT NULL,
                 last_activity INT NOT NULL
             );
-            CREATE INDEX IF NOT EXISTS sessions_user_id_index ON sessions (user_id);
-            CREATE INDEX IF NOT EXISTS sessions_last_activity_index ON sessions (last_activity);
+            CREATE INDEX sessions_user_id_index ON sessions (user_id);
+            CREATE INDEX sessions_last_activity_index ON sessions (last_activity);
 
-            CREATE TABLE IF NOT EXISTS cache (
+            CREATE TABLE cache (
                 key VARCHAR(255) PRIMARY KEY,
                 value TEXT NOT NULL,
                 expiration INT NOT NULL
             );
 
-            CREATE TABLE IF NOT EXISTS cache_locks (
+            CREATE TABLE cache_locks (
                 key VARCHAR(255) PRIMARY KEY,
                 owner VARCHAR(255) NOT NULL,
                 expiration INT NOT NULL
             );
 
-            CREATE TABLE IF NOT EXISTS roles (
+            CREATE TABLE roles (
                 id BIGSERIAL PRIMARY KEY,
                 name VARCHAR(255) UNIQUE NOT NULL,
                 label VARCHAR(255) NOT NULL,
@@ -88,77 +110,83 @@ Route::get('/run-migrations-legionarios', function () {
                 updated_at TIMESTAMP NULL
             );
 
-            CREATE TABLE IF NOT EXISTS user_roles (
+            CREATE TABLE user_roles (
                 id BIGSERIAL PRIMARY KEY,
                 user_id BIGINT NOT NULL,
                 role_id BIGINT NOT NULL,
                 created_at TIMESTAMP NULL,
                 updated_at TIMESTAMP NULL
             );
-            CREATE UNIQUE INDEX IF NOT EXISTS user_roles_unique ON user_roles (user_id, role_id);
+            CREATE UNIQUE INDEX user_roles_unique ON user_roles (user_id, role_id);
 
-            CREATE TABLE IF NOT EXISTS membership_plans (
+            CREATE TABLE membership_plans (
                 id BIGSERIAL PRIMARY KEY,
                 name VARCHAR(255) NOT NULL,
-                price DECIMAL(10,2) NOT NULL,
+                description TEXT NULL,
+                price DECIMAL(10,2) DEFAULT 0,
                 duration_days INT NOT NULL,
-                disciplines TEXT NULL,
-                is_active BOOLEAN DEFAULT true,
+                color VARCHAR(7) DEFAULT '#6C3CF7',
+                features JSONB NULL,
+                is_active SMALLINT DEFAULT 1,
                 created_at TIMESTAMP NULL,
                 updated_at TIMESTAMP NULL
             );
 
-            CREATE TABLE IF NOT EXISTS memberships (
+            CREATE TABLE memberships (
                 id BIGSERIAL PRIMARY KEY,
                 user_id BIGINT NOT NULL,
-                membership_plan_id BIGINT NOT NULL,
+                plan_id BIGINT NOT NULL,
                 start_date DATE NOT NULL,
                 end_date DATE NOT NULL,
                 status VARCHAR(50) DEFAULT 'active',
-                payment_reference VARCHAR(255) NULL,
-                payment_method VARCHAR(50) NULL,
+                price_paid DECIMAL(10,2) DEFAULT 0,
+                notes TEXT NULL,
+                created_by BIGINT NULL,
+                created_at TIMESTAMP NULL,
+                updated_at TIMESTAMP NULL
+            );
+
+            CREATE TABLE attendances (
+                id BIGSERIAL PRIMARY KEY,
+                user_id BIGINT NOT NULL,
+                checked_in_at TIMESTAMP NOT NULL,
                 notes TEXT NULL,
                 created_at TIMESTAMP NULL,
                 updated_at TIMESTAMP NULL
             );
 
-            CREATE TABLE IF NOT EXISTS attendances (
+            CREATE TABLE body_stats (
                 id BIGSERIAL PRIMARY KEY,
                 user_id BIGINT NOT NULL,
-                scanned_at TIMESTAMP NOT NULL,
-                method VARCHAR(50) DEFAULT 'qr',
-                created_at TIMESTAMP NULL,
-                updated_at TIMESTAMP NULL
-            );
-
-            CREATE TABLE IF NOT EXISTS body_stats (
-                id BIGSERIAL PRIMARY KEY,
-                user_id BIGINT NOT NULL,
-                weight_kg DECIMAL(5,2) NOT NULL,
-                height_cm DECIMAL(5,2) NULL,
-                body_fat_percentage DECIMAL(4,2) NULL,
-                muscle_mass_percentage DECIMAL(4,2) NULL,
-                chest_cm DECIMAL(5,2) NULL,
-                waist_cm DECIMAL(5,2) NULL,
-                arms_cm DECIMAL(5,2) NULL,
-                legs_cm DECIMAL(5,2) NULL,
-                recorded_at DATE NOT NULL,
+                weight DECIMAL(5,2) NULL,
+                height DECIMAL(5,2) NULL,
+                bmi DECIMAL(5,2) NULL,
+                body_fat DECIMAL(5,2) NULL,
+                muscle_mass DECIMAL(5,2) NULL,
+                waist DECIMAL(5,2) NULL,
+                hip DECIMAL(5,2) NULL,
+                arm DECIMAL(5,2) NULL,
+                leg DECIMAL(5,2) NULL,
+                chest DECIMAL(5,2) NULL,
+                measured_at DATE NOT NULL,
                 notes TEXT NULL,
+                recorded_by BIGINT NULL,
                 created_at TIMESTAMP NULL,
                 updated_at TIMESTAMP NULL
             );
 
-            CREATE TABLE IF NOT EXISTS progress_photos (
+            CREATE TABLE progress_photos (
                 id BIGSERIAL PRIMARY KEY,
                 user_id BIGINT NOT NULL,
-                photo_url VARCHAR(255) NOT NULL,
-                photo_type VARCHAR(50) DEFAULT 'front',
+                photo_path VARCHAR(255) NOT NULL,
+                type VARCHAR(50) DEFAULT 'front',
                 taken_at DATE NOT NULL,
+                notes TEXT NULL,
                 created_at TIMESTAMP NULL,
                 updated_at TIMESTAMP NULL
             );
 
-            CREATE TABLE IF NOT EXISTS exercises (
+            CREATE TABLE exercises (
                 id BIGSERIAL PRIMARY KEY,
                 name VARCHAR(255) NOT NULL,
                 muscle_group VARCHAR(100) NOT NULL,
@@ -169,31 +197,33 @@ Route::get('/run-migrations-legionarios', function () {
                 updated_at TIMESTAMP NULL
             );
 
-            CREATE TABLE IF NOT EXISTS routines (
+            CREATE TABLE routines (
                 id BIGSERIAL PRIMARY KEY,
+                trainer_id BIGINT NOT NULL,
                 name VARCHAR(255) NOT NULL,
                 description TEXT NULL,
+                difficulty VARCHAR(50) DEFAULT 'intermediate',
                 goal VARCHAR(100) NULL,
-                level VARCHAR(50) DEFAULT 'intermediate',
-                created_by BIGINT NULL,
-                is_template BOOLEAN DEFAULT false,
+                is_template SMALLINT DEFAULT 0,
+                duration_weeks INT NULL,
                 created_at TIMESTAMP NULL,
-                updated_at TIMESTAMP NULL
+                updated_at TIMESTAMP NULL,
+                deleted_at TIMESTAMP NULL
             );
 
-            CREATE TABLE IF NOT EXISTS routine_days (
+            CREATE TABLE routine_days (
                 id BIGSERIAL PRIMARY KEY,
                 routine_id BIGINT NOT NULL,
                 day_number SMALLINT NOT NULL,
                 name VARCHAR(255) NOT NULL,
                 focus_area VARCHAR(100) NULL,
                 notes TEXT NULL,
-                is_rest_day BOOLEAN DEFAULT false,
+                is_rest_day SMALLINT DEFAULT 0,
                 created_at TIMESTAMP NULL,
                 updated_at TIMESTAMP NULL
             );
 
-            CREATE TABLE IF NOT EXISTS routine_day_exercises (
+            CREATE TABLE routine_day_exercises (
                 id BIGSERIAL PRIMARY KEY,
                 routine_day_id BIGINT NOT NULL,
                 exercise_id BIGINT NOT NULL,
@@ -207,49 +237,55 @@ Route::get('/run-migrations-legionarios', function () {
                 updated_at TIMESTAMP NULL
             );
 
-            CREATE TABLE IF NOT EXISTS observations (
+            CREATE TABLE observations (
                 id BIGSERIAL PRIMARY KEY,
-                student_id BIGINT NOT NULL,
                 trainer_id BIGINT NOT NULL,
+                student_id BIGINT NOT NULL,
                 content TEXT NOT NULL,
+                is_private SMALLINT DEFAULT 0,
                 category VARCHAR(50) DEFAULT 'general',
+                is_pinned SMALLINT DEFAULT 0,
                 created_at TIMESTAMP NULL,
                 updated_at TIMESTAMP NULL
             );
 
-            CREATE TABLE IF NOT EXISTS user_routines (
+            CREATE TABLE user_routines (
                 id BIGSERIAL PRIMARY KEY,
                 user_id BIGINT NOT NULL,
                 routine_id BIGINT NOT NULL,
                 assigned_at DATE NOT NULL,
                 ends_at DATE NULL,
-                is_active BOOLEAN DEFAULT true,
+                is_active SMALLINT DEFAULT 1,
                 notes TEXT NULL,
                 created_at TIMESTAMP NULL,
                 updated_at TIMESTAMP NULL
             );
 
-            CREATE TABLE IF NOT EXISTS achievements (
+            CREATE TABLE achievements (
                 id BIGSERIAL PRIMARY KEY,
-                title VARCHAR(255) NOT NULL,
+                name VARCHAR(255) NOT NULL,
                 description TEXT NOT NULL,
-                badge_icon VARCHAR(255) NOT NULL,
-                category VARCHAR(100) DEFAULT 'attendance',
+                icon VARCHAR(255) NOT NULL,
+                badge_color VARCHAR(7) DEFAULT '#F59E0B',
+                condition_type VARCHAR(100) DEFAULT 'attendances_count',
+                condition_value INT DEFAULT 1,
                 points INT DEFAULT 10,
+                is_active SMALLINT DEFAULT 1,
                 created_at TIMESTAMP NULL,
                 updated_at TIMESTAMP NULL
             );
 
-            CREATE TABLE IF NOT EXISTS user_achievements (
+            CREATE TABLE user_achievements (
                 id BIGSERIAL PRIMARY KEY,
                 user_id BIGINT NOT NULL,
                 achievement_id BIGINT NOT NULL,
-                awarded_at TIMESTAMP NOT NULL,
+                unlocked_at TIMESTAMP NOT NULL,
                 created_at TIMESTAMP NULL,
                 updated_at TIMESTAMP NULL
             );
+            CREATE UNIQUE INDEX user_achievements_unique ON user_achievements (user_id, achievement_id);
 
-            CREATE TABLE IF NOT EXISTS weight_logs (
+            CREATE TABLE weight_logs (
                 id BIGSERIAL PRIMARY KEY,
                 user_id BIGINT NOT NULL,
                 exercise_id BIGINT NOT NULL,
@@ -263,11 +299,11 @@ Route::get('/run-migrations-legionarios', function () {
             );
         ");
 
-        // 2. Run Seeders
+        // Run Seeders
         $seeder = new \Database\Seeders\DatabaseSeeder();
         $seeder->run();
 
-        return "<pre>✅ ¡BASE DE DATOS SUPABASE CONFIGURADA Y POBLADA CON ÉXITO!\n\nUsuarios creados:\n- admin@admin.com (password: password)\n- trainer@legionarios.cl (password: password)\n- student@legionarios.cl (password: password)</pre>";
+        return "<pre>✅ ¡BASE DE DATOS SUPABASE CONFIGURADA Y POBLADA CON ÉXITO!\n\nUsuarios de prueba creados:\n- admin@admin.com (password: password)\n- trainer@legionarios.cl (password: password)\n- student@legionarios.cl (password: password)\n\nAhora puedes ir a /login e iniciar sesión normalmente.</pre>";
     } catch (\Throwable $e) {
         return "<pre>ERROR: " . htmlspecialchars($e->getMessage()) . "\n" . htmlspecialchars($e->getTraceAsString()) . "</pre>";
     }
