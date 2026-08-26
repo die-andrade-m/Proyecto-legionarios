@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('routine_day_exercises', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('routine_day_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('exercise_id')->constrained()->restrictOnDelete();
+            $table->foreignId('routine_day_id')->constrained('routine_days')->cascadeOnDelete();
+            $table->foreignId('exercise_id')->constrained('exercises')->restrictOnDelete();
             $table->tinyInteger('sets')->default(3);
             $table->string('reps', 20)->default('10'); // "10", "8-12", "to failure"
             $table->decimal('weight_kg', 6, 2)->nullable();

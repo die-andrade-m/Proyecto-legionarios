@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('routine_days', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('routine_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('routine_id')->constrained('routines')->cascadeOnDelete();
             $table->tinyInteger('day_number'); // 1=Monday, 2=Tuesday ... 7=Sunday
             $table->string('name'); // e.g., "Día A - Pecho y Tríceps"
             $table->string('focus_area')->nullable(); // chest, back, legs, etc.
