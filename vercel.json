@@ -5,7 +5,7 @@
     "outputDirectory": "public",
     "functions": {
         "api/index.php": {
-            "runtime": "vercel-php@0.7.0"
+            "runtime": "vercel-php@0.8.0"
         }
     },
     "routes": [
@@ -27,7 +27,7 @@
         }
     ],
     "env": {
-        "NODE_VERSION": "24.x",
+        "NODE_VERSION": "22.x",
         "APP_ENV": "production",
         "APP_DEBUG": "false",
         "LOG_CHANNEL": "stderr",
