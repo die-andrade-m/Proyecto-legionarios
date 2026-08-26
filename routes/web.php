@@ -179,9 +179,9 @@ Route::get('/run-migrations-legionarios', function () {
                 id BIGSERIAL PRIMARY KEY,
                 user_id BIGINT NOT NULL,
                 photo_path VARCHAR(255) NOT NULL,
-                type VARCHAR(50) DEFAULT 'front',
+                caption VARCHAR(255) NULL,
+                angle VARCHAR(50) DEFAULT 'front',
                 taken_at DATE NOT NULL,
-                notes TEXT NULL,
                 created_at TIMESTAMP NULL,
                 updated_at TIMESTAMP NULL
             );
@@ -189,10 +189,14 @@ Route::get('/run-migrations-legionarios', function () {
             CREATE TABLE exercises (
                 id BIGSERIAL PRIMARY KEY,
                 name VARCHAR(255) NOT NULL,
-                muscle_group VARCHAR(100) NOT NULL,
-                category VARCHAR(100) DEFAULT 'general',
                 description TEXT NULL,
+                muscle_group VARCHAR(100) NOT NULL,
+                secondary_muscle_group VARCHAR(100) NULL,
+                equipment VARCHAR(100) NULL,
+                difficulty VARCHAR(50) DEFAULT 'intermediate',
                 video_url VARCHAR(255) NULL,
+                image_path VARCHAR(255) NULL,
+                is_active SMALLINT DEFAULT 1,
                 created_at TIMESTAMP NULL,
                 updated_at TIMESTAMP NULL
             );
