@@ -104,7 +104,7 @@ Route::get('/run-migrations-legionarios', function () {
             CREATE TABLE roles (
                 id BIGSERIAL PRIMARY KEY,
                 name VARCHAR(255) UNIQUE NOT NULL,
-                label VARCHAR(255) NOT NULL,
+                display_name VARCHAR(255) NOT NULL,
                 description TEXT NULL,
                 created_at TIMESTAMP NULL,
                 updated_at TIMESTAMP NULL
