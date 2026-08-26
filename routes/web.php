@@ -50,7 +50,11 @@ Route::get('/run-migrations-legionarios', function () {
             'message' => $e->getMessage(),
         ], 500);
     }
-});
+})->withoutMiddleware([
+    \Illuminate\Session\Middleware\StartSession::class,
+    \Illuminate\Foundation\Http\Middleware\ValidateCsrfToken::class,
+    \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+]);
 
 // Central Dashboard router after auth
 Route::get('/dashboard', DashboardRouterController::class)
