@@ -1,7 +1,13 @@
 <?php
 
+// Force HTTPS recognition behind Vercel edge proxy
+if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') {
+    $_SERVER['HTTPS'] = 'on';
+    $_SERVER['SERVER_PORT'] = 443;
+}
+
 // Sanitize environment variables (remove UTF-8 BOM, whitespace, quotes)
-foreach (['APP_KEY', 'APP_ENV', 'APP_DEBUG', 'DB_CONNECTION', 'DB_HOST', 'DB_PORT', 'DB_DATABASE', 'DB_USERNAME', 'DB_PASSWORD', 'DB_URL'] as $var) {
+foreach (['APP_KEY', 'APP_ENV', 'APP_DEBUG', 'DB_CONNECTION', 'DB_HOST', 'DB_PORT', 'DB_DATABASE', 'DB_USERNAME', 'DB_PASSWORD', 'DB_URL', 'SESSION_DRIVER'] as $var) {
     $val = getenv($var);
     if ($val === false && isset($_ENV[$var])) {
         $val = $_ENV[$var];
