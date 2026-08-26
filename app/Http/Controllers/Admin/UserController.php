@@ -33,16 +33,23 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:100',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => 'required|string|email|max:255|unique:users,email',
             'phone' => 'nullable|string|max:20',
-            'password' => 'required|string|min:8',
+            'password' => 'required|string|min:6',
             'role_id' => 'required|exists:roles,id',
             'trainer_id' => 'nullable|exists:users,id',
             'objective' => 'nullable|string',
             'birth_date' => 'nullable|date',
-            // Membership fields if student
             'plan_id' => 'nullable|exists:membership_plans,id',
             'start_date' => 'nullable|date',
+        ], [
+            'name.required' => 'El nombre es obligatorio.',
+            'email.required' => 'El correo electrónico es obligatorio.',
+            'email.email' => 'El formato del correo electrónico no es válido.',
+            'email.unique' => 'Este correo electrónico ya está registrado.',
+            'password.required' => 'La contraseña es obligatoria.',
+            'password.min' => 'La contraseña debe tener al menos :min caracteres.',
+            'role_id.required' => 'Debes seleccionar un rol para el usuario.',
         ]);
 
         $user = User::create([
@@ -52,7 +59,7 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
             'birth_date' => $request->birth_date,
             'objective' => $request->objective,
-            'trainer_id' => $request->trainer_id,
+            'trainer_id' => $request->trainer_id ?: null,
             'is_active' => true,
         ]);
 
@@ -82,15 +89,27 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
-        $request->validate([
+        $rules = [
             'name' => 'required|string|max:100',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'phone' => 'nullable|string|max:20',
-            'password' => 'nullable|string|min:8',
             'trainer_id' => 'nullable|exists:users,id',
             'objective' => 'nullable|string',
             'birth_date' => 'nullable|date',
             'is_active' => 'required|boolean',
+        ];
+
+        if ($request->filled('password')) {
+            $rules['password'] = 'string|min:6';
+        }
+
+        $request->validate($rules, [
+            'name.required' => 'El nombre es obligatorio.',
+            'email.required' => 'El correo electrónico es obligatorio.',
+            'email.email' => 'El formato del correo electrónico no es válido.',
+            'email.unique' => 'Este correo ya está registrado por otro usuario.',
+            'password.min' => 'La nueva contraseña debe tener al menos :min caracteres.',
+            'is_active.required' => 'El estado es obligatorio.',
         ]);
 
         $user->update([
@@ -99,11 +118,11 @@ class UserController extends Controller
             'phone' => $request->phone,
             'birth_date' => $request->birth_date,
             'objective' => $request->objective,
-            'trainer_id' => $request->trainer_id,
-            'is_active' => $request->is_active,
+            'trainer_id' => $request->trainer_id ?: null,
+            'is_active' => (bool) $request->is_active,
         ]);
 
-        if ($request->password) {
+        if ($request->filled('password')) {
             $user->update(['password' => Hash::make($request->password)]);
         }
 
