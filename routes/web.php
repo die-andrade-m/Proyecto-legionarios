@@ -26,6 +26,32 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// Database Migration & Seeding Endpoint for Serverless
+Route::get('/run-migrations-legionarios', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('migrate', [
+            '--force' => true,
+        ]);
+        $migrateOutput = \Illuminate\Support\Facades\Artisan::output();
+
+        \Illuminate\Support\Facades\Artisan::call('db:seed', [
+            '--force' => true,
+        ]);
+        $seedOutput = \Illuminate\Support\Facades\Artisan::output();
+
+        return response()->json([
+            'status' => 'success',
+            'migrate' => $migrateOutput,
+            'seed' => $seedOutput,
+        ]);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'status' => 'error',
+            'message' => $e->getMessage(),
+        ], 500);
+    }
+});
+
 // Central Dashboard router after auth
 Route::get('/dashboard', DashboardRouterController::class)
     ->middleware(['auth', 'verified'])
