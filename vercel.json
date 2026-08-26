@@ -3,11 +3,12 @@
     "framework": null,
     "buildCommand": "npm run build",
     "outputDirectory": ".",
-    "functions": {
-        "api/index.php": {
-            "runtime": "vercel-php"
+    "builds": [
+        {
+            "src": "api/index.php",
+            "use": "vercel-php"
         }
-    },
+    ],
     "routes": [
         {
             "src": "/build/(.*)",
@@ -27,6 +28,7 @@
         }
     ],
     "env": {
+        "NODE_VERSION": "24.x",
         "APP_ENV": "production",
         "APP_DEBUG": "false",
         "LOG_CHANNEL": "stderr",
