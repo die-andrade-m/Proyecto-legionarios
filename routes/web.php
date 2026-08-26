@@ -29,13 +29,28 @@ Route::get('/', function () {
 // Database Migration & Seeding Endpoint for Serverless
 Route::get('/run-migrations-legionarios', function () {
     try {
-        \Illuminate\Support\Facades\Artisan::call('migrate:fresh', [
-            '--force' => true,
-            '--seed' => true,
-        ]);
-        $output = \Illuminate\Support\Facades\Artisan::output();
+        // Clean all tables with CASCADE in PostgreSQL
+        \Illuminate\Support\Facades\DB::statement("
+            DO \$\$ DECLARE
+                r RECORD;
+            BEGIN
+                FOR r IN (SELECT tablename FROM pg_tables WHERE schemaname = current_schema()) LOOP
+                    EXECUTE 'DROP TABLE IF EXISTS ' || quote_ident(r.tablename) || ' CASCADE';
+                END LOOP;
+            END \$\$;
+        ");
 
-        return "<pre>SUCCESS:\n" . htmlspecialchars($output) . "</pre>";
+        \Illuminate\Support\Facades\Artisan::call('migrate', [
+            '--force' => true,
+        ]);
+        $migrateOutput = \Illuminate\Support\Facades\Artisan::output();
+
+        \Illuminate\Support\Facades\Artisan::call('db:seed', [
+            '--force' => true,
+        ]);
+        $seedOutput = \Illuminate\Support\Facades\Artisan::output();
+
+        return "<pre>SUCCESS!\n\nMIGRATE:\n" . htmlspecialchars($migrateOutput) . "\n\nSEED:\n" . htmlspecialchars($seedOutput) . "</pre>";
     } catch (\Throwable $e) {
         return "<pre>ERROR: " . htmlspecialchars($e->getMessage()) . "\n" . htmlspecialchars($e->getTraceAsString()) . "</pre>";
     }
