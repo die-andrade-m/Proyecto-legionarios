@@ -4,9 +4,16 @@
 <div class="row g-3 g-md-4">
     <!-- Header Page -->
     <div class="col-12">
-        <div>
-            <h4 class="text-white mb-1 font-heading">Mi Panel de Entrenador</h4>
-            <p class="text-secondary small mb-0">Monitorea la asistencia, membresías y evolución de tus alumnos.</p>
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-2">
+            <div>
+                <h4 class="text-white mb-0 font-heading">Mi Panel de Entrenador</h4>
+                <p class="text-secondary small mb-0">Monitorea la asistencia, membresías y evolución de tus alumnos.</p>
+            </div>
+
+            <a href="{{ route('trainer.attendances.index') }}" class="btn btn-premium btn-sm d-flex align-items-center gap-2 py-2 px-3">
+                <i data-lucide="calendar-check-2" style="width: 16px; height: 16px;"></i>
+                <span>Control de Asistencias</span>
+            </a>
         </div>
     </div>
 
@@ -59,7 +66,12 @@
     <!-- Today's Attendance list -->
     <div class="col-12 col-lg-6">
         <div class="glass-card p-3 p-md-4 h-100">
-            <h6 class="text-white mb-3 font-heading">Ingresos de Hoy</h6>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="text-white mb-0 font-heading">Ingresos de Hoy</h6>
+                <a href="{{ route('trainer.attendances.index') }}" class="btn btn-sm btn-outline-primary border-0 py-0 px-1 small" style="font-size: 11px;">
+                    Ver Todo <i data-lucide="arrow-right" style="width: 12px; vertical-align: middle;"></i>
+                </a>
+            </div>
             
             <div class="d-flex flex-column gap-2 overflow-auto" style="max-height: 350px;">
                 @forelse($todayAttendances as $att)

@@ -21,6 +21,10 @@
                         <i data-lucide="layout-dashboard" class="me-3" style="width: 20px;"></i>
                         Panel General
                     </a>
+                    <a href="{{ route('trainer.attendances.index') }}" class="nav-link text-white py-2 px-3 rounded d-flex align-items-center {{ request()->routeIs('trainer.attendances.*') ? 'bg-primary bg-opacity-25 text-primary border-start border-primary border-3 fw-bold' : '' }}">
+                        <i data-lucide="calendar-check" class="me-3" style="width: 20px;"></i>
+                        Control Asistencias
+                    </a>
                     <a href="{{ route('admin.users.index') }}" class="nav-link text-white py-2 px-3 rounded d-flex align-items-center {{ request()->routeIs('admin.users.*') ? 'bg-primary bg-opacity-25 text-primary border-start border-primary border-3 fw-bold' : '' }}">
                         <i data-lucide="users" class="me-3" style="width: 20px;"></i>
                         Gestión Usuarios
@@ -30,6 +34,10 @@
                     <a href="{{ route('trainer.dashboard') }}" class="nav-link text-white py-2 px-3 rounded d-flex align-items-center {{ request()->routeIs('trainer.dashboard') ? 'bg-primary bg-opacity-25 text-primary border-start border-primary border-3 fw-bold' : '' }}">
                         <i data-lucide="layout-dashboard" class="me-3" style="width: 20px;"></i>
                         Mi Panel
+                    </a>
+                    <a href="{{ route('trainer.attendances.index') }}" class="nav-link text-white py-2 px-3 rounded d-flex align-items-center {{ request()->routeIs('trainer.attendances.*') ? 'bg-primary bg-opacity-25 text-primary border-start border-primary border-3 fw-bold' : '' }}">
+                        <i data-lucide="calendar-check" class="me-3" style="width: 20px;"></i>
+                        Control Asistencias
                     </a>
                     <a href="{{ route('trainer.students.index') }}" class="nav-link text-white py-2 px-3 rounded d-flex align-items-center {{ request()->routeIs('trainer.students.*') ? 'bg-primary bg-opacity-25 text-primary border-start border-primary border-3 fw-bold' : '' }}">
                         <i data-lucide="users" class="me-3" style="width: 20px;"></i>
@@ -44,6 +52,10 @@
                     <a href="{{ route('student.dashboard') }}" class="nav-link text-white py-2 px-3 rounded d-flex align-items-center {{ request()->routeIs('student.dashboard') ? 'bg-primary bg-opacity-25 text-primary border-start border-primary border-3 fw-bold' : '' }}">
                         <i data-lucide="home" class="me-3" style="width: 20px;"></i>
                         Inicio
+                    </a>
+                    <a href="{{ route('student.attendances.index') }}" class="nav-link text-white py-2 px-3 rounded d-flex align-items-center {{ request()->routeIs('student.attendances.*') ? 'bg-primary bg-opacity-25 text-primary border-start border-primary border-3 fw-bold' : '' }}">
+                        <i data-lucide="calendar-check" class="me-3" style="width: 20px;"></i>
+                        Mi Asistencia
                     </a>
                     <a href="{{ route('student.routine') }}" class="nav-link text-white py-2 px-3 rounded d-flex align-items-center {{ request()->routeIs('student.routine') ? 'bg-primary bg-opacity-25 text-primary border-start border-primary border-3 fw-bold' : '' }}">
                         <i data-lucide="dumbbell" class="me-3" style="width: 20px;"></i>
@@ -116,6 +128,10 @@
                         <i data-lucide="layout-dashboard" class="me-3 text-warning" style="width: 20px;"></i>
                         Panel General
                     </a>
+                    <a href="{{ route('trainer.attendances.index') }}" class="nav-link text-white py-3 px-3 rounded d-flex align-items-center {{ request()->routeIs('trainer.attendances.*') ? 'bg-primary bg-opacity-25 text-primary border-start border-primary border-3 fw-bold' : '' }}">
+                        <i data-lucide="calendar-check" class="me-3 text-warning" style="width: 20px;"></i>
+                        Control Asistencias
+                    </a>
                     <a href="{{ route('admin.users.index') }}" class="nav-link text-white py-3 px-3 rounded d-flex align-items-center {{ request()->routeIs('admin.users.*') ? 'bg-primary bg-opacity-25 text-primary border-start border-primary border-3 fw-bold' : '' }}">
                         <i data-lucide="users" class="me-3 text-warning" style="width: 20px;"></i>
                         Gestión Usuarios
@@ -125,6 +141,10 @@
                     <a href="{{ route('trainer.dashboard') }}" class="nav-link text-white py-3 px-3 rounded d-flex align-items-center {{ request()->routeIs('trainer.dashboard') ? 'bg-primary bg-opacity-25 text-primary border-start border-primary border-3 fw-bold' : '' }}">
                         <i data-lucide="layout-dashboard" class="me-3 text-warning" style="width: 20px;"></i>
                         Mi Panel
+                    </a>
+                    <a href="{{ route('trainer.attendances.index') }}" class="nav-link text-white py-3 px-3 rounded d-flex align-items-center {{ request()->routeIs('trainer.attendances.*') ? 'bg-primary bg-opacity-25 text-primary border-start border-primary border-3 fw-bold' : '' }}">
+                        <i data-lucide="calendar-check" class="me-3 text-warning" style="width: 20px;"></i>
+                        Control Asistencias
                     </a>
                     <a href="{{ route('trainer.students.index') }}" class="nav-link text-white py-3 px-3 rounded d-flex align-items-center {{ request()->routeIs('trainer.students.*') ? 'bg-primary bg-opacity-25 text-primary border-start border-primary border-3 fw-bold' : '' }}">
                         <i data-lucide="users" class="me-3 text-warning" style="width: 20px;"></i>
@@ -139,6 +159,10 @@
                     <a href="{{ route('student.dashboard') }}" class="nav-link text-white py-3 px-3 rounded d-flex align-items-center {{ request()->routeIs('student.dashboard') ? 'bg-primary bg-opacity-25 text-primary border-start border-primary border-3 fw-bold' : '' }}">
                         <i data-lucide="home" class="me-3 text-warning" style="width: 20px;"></i>
                         Inicio
+                    </a>
+                    <a href="{{ route('student.attendances.index') }}" class="nav-link text-white py-3 px-3 rounded d-flex align-items-center {{ request()->routeIs('student.attendances.*') ? 'bg-primary bg-opacity-25 text-primary border-start border-primary border-3 fw-bold' : '' }}">
+                        <i data-lucide="calendar-check" class="me-3 text-warning" style="width: 20px;"></i>
+                        Mi Asistencia
                     </a>
                     <a href="{{ route('student.routine') }}" class="nav-link text-white py-3 px-3 rounded d-flex align-items-center {{ request()->routeIs('student.routine') ? 'bg-primary bg-opacity-25 text-primary border-start border-primary border-3 fw-bold' : '' }}">
                         <i data-lucide="dumbbell" class="me-3 text-warning" style="width: 20px;"></i>

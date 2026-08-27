@@ -19,22 +19,32 @@
                 </div>
             </div>
 
-            <!-- Attendance Button & Quick Links -->
-            <div class="d-flex align-items-center gap-2 flex-wrap justify-content-center w-100 w-md-auto">
-                @if($checkedInToday)
-                    <button class="btn btn-premium bg-success bg-opacity-25 text-success border border-success border-opacity-50 py-2 px-3 d-flex align-items-center justify-content-center gap-2 w-100 w-md-auto" disabled style="font-size: 14px;">
-                        <i data-lucide="check-circle" style="width: 18px; height: 18px;"></i>
-                        <span>¡Asistencia Registrada Hoy!</span>
-                    </button>
+            <!-- Attendance Status & Calendar Link -->
+            <div class="d-flex flex-column align-items-center align-items-md-end gap-2 w-100 w-md-auto">
+                @if($checkedInToday && $todayAttendance)
+                    <div class="d-flex align-items-center gap-2 p-2 px-3 rounded bg-success bg-opacity-15 border border-success border-opacity-40 text-success text-center text-md-end">
+                        <i data-lucide="check-circle" style="width: 20px; height: 20px; flex-shrink: 0;"></i>
+                        <div>
+                            <span class="d-block fw-bold small lh-1">¡Presente Hoy!</span>
+                            <small style="font-size: 10px;" class="text-success text-opacity-75">
+                                {{ $todayAttendance->checked_in_at->format('H:i:s') }} — Prof. {{ $todayAttendance->recorder?->name ?? 'Entrenador' }}
+                            </small>
+                        </div>
+                    </div>
                 @else
-                    <form method="POST" action="{{ route('student.attendance.store') }}" class="w-100 w-md-auto">
-                        @csrf
-                        <button type="submit" class="btn btn-premium btn-pulse py-2 px-4 fs-6 d-flex align-items-center justify-content-center gap-2 w-100">
-                            <i data-lucide="qr-code" style="width: 20px; height: 20px;"></i>
-                            <span>Registrar Asistencia</span>
-                        </button>
-                    </form>
+                    <div class="d-flex align-items-center gap-2 p-2 px-3 rounded bg-dark bg-opacity-40 border border-secondary border-opacity-25 text-secondary text-center text-md-end">
+                        <i data-lucide="clock" style="width: 18px; height: 18px; flex-shrink: 0;"></i>
+                        <div>
+                            <span class="d-block small lh-1 text-white">Asistencia de Hoy</span>
+                            <small style="font-size: 10px;">Registro por el profesor en dojo</small>
+                        </div>
+                    </div>
                 @endif
+
+                <a href="{{ route('student.attendances.index') }}" class="btn btn-sm btn-outline-warning d-flex align-items-center gap-1 py-1 px-3" style="font-size: 12px;">
+                    <i data-lucide="calendar" style="width: 14px; height: 14px;"></i>
+                    <span>Ver Mi Calendario Completo</span>
+                </a>
             </div>
         </div>
     </div>

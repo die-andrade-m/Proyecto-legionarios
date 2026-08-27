@@ -4,11 +4,13 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardRouterController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboard;
 use App\Http\Controllers\Student\AttendanceController as StudentAttendance;
+use App\Http\Controllers\Student\AttendanceHistoryController as StudentAttendanceHistory;
 use App\Http\Controllers\Student\ProgressController as StudentProgress;
 use App\Http\Controllers\Student\RoutineController as StudentRoutine;
 use App\Http\Controllers\Student\WeightLogController as StudentWeightLog;
 
 use App\Http\Controllers\Trainer\DashboardController as TrainerDashboard;
+use App\Http\Controllers\Trainer\AttendanceController as TrainerAttendance;
 use App\Http\Controllers\Trainer\StudentController as TrainerStudent;
 use App\Http\Controllers\Trainer\RoutineController as TrainerRoutine;
 use App\Http\Controllers\Trainer\ObservationController as TrainerObservation;
@@ -41,6 +43,9 @@ Route::middleware('auth')->group(function () {
 // 1. STUDENT ROUTES
 Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')->group(function () {
     Route::get('/dashboard', [StudentDashboard::class, 'index'])->name('dashboard');
+    
+    // Attendance Calendar & History
+    Route::get('/attendances', [StudentAttendanceHistory::class, 'index'])->name('attendances.index');
     Route::post('/attendance', [StudentAttendance::class, 'store'])->name('attendance.store');
     
     Route::get('/progress', [StudentProgress::class, 'index'])->name('progress');
@@ -57,6 +62,11 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->name('student.')
 // 2. TRAINER ROUTES
 Route::middleware(['auth', 'role:trainer'])->prefix('trainer')->name('trainer.')->group(function () {
     Route::get('/dashboard', [TrainerDashboard::class, 'index'])->name('dashboard');
+    
+    // Attendance Management & Calendar
+    Route::get('/attendances', [TrainerAttendance::class, 'index'])->name('attendances.index');
+    Route::post('/attendances', [TrainerAttendance::class, 'store'])->name('attendances.store');
+    Route::delete('/attendances/{attendance}', [TrainerAttendance::class, 'destroy'])->name('attendances.destroy');
     
     // Students Management
     Route::get('/students', [TrainerStudent::class, 'index'])->name('students.index');

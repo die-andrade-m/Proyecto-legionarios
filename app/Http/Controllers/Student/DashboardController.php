@@ -61,8 +61,9 @@ class DashboardController extends Controller
         // Unlocked achievements
         $achievements = $user->achievements()->orderBy('user_achievements.unlocked_at', 'desc')->get();
 
-        // Checked in today check
-        $checkedInToday = $user->hasCheckedInToday();
+        // Today's attendance record with recorder info
+        $todayAttendance = $user->attendances()->with('recorder')->whereDate('checked_in_at', today())->first();
+        $checkedInToday = $todayAttendance !== null;
 
         return view('student.dashboard', compact(
             'user',
@@ -75,7 +76,8 @@ class DashboardController extends Controller
             'todayRoutineDay',
             'observations',
             'achievements',
-            'checkedInToday'
+            'checkedInToday',
+            'todayAttendance'
         ));
     }
 }

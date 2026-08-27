@@ -39,7 +39,7 @@ class StudentController extends Controller
         $trainer = $request->user();
 
         // Security check
-        if ($student->trainer_id !== $trainer->id) {
+        if ($student->trainer_id !== $trainer->id && !$trainer->isAdmin()) {
             abort(403, 'No tienes permiso para ver este alumno.');
         }
 
@@ -51,10 +51,13 @@ class StudentController extends Controller
         $observations = $student->observations()->orderBy('created_at', 'desc')->get();
         $achievements = $student->achievements()->orderBy('user_achievements.unlocked_at', 'desc')->get();
 
-        // Calculate attendance stats
-        $monthlyStats = $this->attendanceService->getMonthlyStats($student);
+        // Calculate detailed attendance calendar
+        $year = $request->input('year', (int)now()->year);
+        $month = $request->input('month', (int)now()->month);
+        $calendarData = $this->attendanceService->getDetailedCalendar($student, (int)$year, (int)$month);
         $attendancesThisMonth = $student->attendancesThisMonth();
         $streak = $student->currentStreak();
+        $studentAttendances = $student->attendances()->with('recorder')->orderBy('checked_in_at', 'desc')->paginate(10);
 
         // Graph data
         $chartData = [
@@ -78,10 +81,13 @@ class StudentController extends Controller
             'photos',
             'observations',
             'achievements',
-            'monthlyStats',
+            'calendarData',
             'attendancesThisMonth',
             'streak',
-            'chartData'
+            'chartData',
+            'studentAttendances',
+            'year',
+            'month'
         ));
     }
 
@@ -90,7 +96,7 @@ class StudentController extends Controller
         /** @var \App\Models\User $trainer */
         $trainer = $request->user();
 
-        if ($student->trainer_id !== $trainer->id) {
+        if ($student->trainer_id !== $trainer->id && !$trainer->isAdmin()) {
             abort(403);
         }
 

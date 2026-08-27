@@ -49,6 +49,11 @@
                     <i data-lucide="message-square" class="me-2" style="width: 18px; vertical-align: text-bottom;"></i>Observaciones y Feedback
                 </button>
             </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link glass-card text-white py-2 px-4 border-0" id="attendance-tab" data-bs-toggle="tab" data-bs-target="#attendance-pane" type="button" role="tab">
+                    <i data-lucide="calendar" class="me-2" style="width: 18px; vertical-align: text-bottom;"></i>Asistencias y Calendario
+                </button>
+            </li>
         </ul>
     </div>
 
@@ -300,6 +305,164 @@
                                         <p class="mb-0 small">No hay observaciones registradas para este alumno.</p>
                                     </div>
                                 @endforelse
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. ASISTENCIAS Y CALENDARIO PANE -->
+            <div class="tab-pane fade" id="attendance-pane" role="tabpanel" aria-labelledby="attendance-tab" tabindex="0">
+                <div class="row g-4">
+                    <!-- Formulario Rápido de Asistencia (Izquierda) -->
+                    <div class="col-lg-4">
+                        <div class="glass-card p-4 mb-4">
+                            <h5 class="text-white mb-3">Registrar Asistencia</h5>
+                            <form action="{{ route('trainer.attendances.store') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="student_id" value="{{ $student->id }}">
+                                
+                                <div class="mb-3">
+                                    <label class="form-label text-secondary small">Fecha de Asistencia*</label>
+                                    <input type="date" name="date" value="{{ now()->toDateString() }}" class="form-control bg-dark border-secondary border-opacity-25 text-white" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label text-secondary small">Hora de Ingreso (HH:MM)*</label>
+                                    <input type="time" name="time" value="{{ now()->format('H:i') }}" class="form-control bg-dark border-secondary border-opacity-25 text-white" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label text-secondary small">Notas u Observación</label>
+                                    <input type="text" name="notes" placeholder="Ej. Asistió a clase de Striking" class="form-control bg-dark border-secondary border-opacity-25 text-white">
+                                </div>
+
+                                <button type="submit" class="btn btn-premium w-100 py-2 d-flex align-items-center justify-content-center gap-2">
+                                    <i data-lucide="check" style="width: 18px;"></i>
+                                    <span>Guardar Asistencia</span>
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Resumen del Mes -->
+                        <div class="glass-card p-4">
+                            <h6 class="text-warning font-heading mb-3">Resumen de Asistencia</h6>
+                            <div class="d-flex justify-content-between text-secondary small mb-2">
+                                <span>Total en {{ $calendarData['monthName'] }}:</span>
+                                <strong class="text-white stat-value">{{ $calendarData['count'] }} días</strong>
+                            </div>
+                            <div class="d-flex justify-content-between text-secondary small mb-2">
+                                <span>Porcentaje del mes:</span>
+                                <strong class="text-success stat-value">{{ $calendarData['percentage'] }}%</strong>
+                            </div>
+                            <div class="d-flex justify-content-between text-secondary small">
+                                <span>Racha actual:</span>
+                                <strong class="text-warning stat-value">🔥 {{ $streak }} días</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Calendario Mensual y Registro Histórico (Derecha) -->
+                    <div class="col-lg-8">
+                        <!-- Calendario Visual -->
+                        <div class="glass-card p-4 mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="text-white mb-0 font-heading">Calendario de Asistencias: {{ $calendarData['monthName'] }}</h5>
+                                
+                                <div class="d-flex gap-1">
+                                    <a href="{{ route('trainer.students.show', ['student' => $student->id, 'year' => $calendarData['prevYear'], 'month' => $calendarData['prevMonth']]) }}" class="btn btn-sm btn-outline-secondary border-0 text-white">
+                                        <i data-lucide="chevron-left" style="width: 16px;"></i>
+                                    </a>
+                                    <a href="{{ route('trainer.students.show', ['student' => $student->id, 'year' => $calendarData['nextYear'], 'month' => $calendarData['nextMonth']]) }}" class="btn btn-sm btn-outline-secondary border-0 text-white">
+                                        <i data-lucide="chevron-right" style="width: 16px;"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="table table-bordered border-secondary border-opacity-10 text-center mb-0" style="table-layout: fixed;">
+                                    <thead>
+                                        <tr class="text-warning small">
+                                            <th style="font-size: 11px;">Lun</th>
+                                            <th style="font-size: 11px;">Mar</th>
+                                            <th style="font-size: 11px;">Mié</th>
+                                            <th style="font-size: 11px;">Jue</th>
+                                            <th style="font-size: 11px;">Vie</th>
+                                            <th style="font-size: 11px;">Sáb</th>
+                                            <th style="font-size: 11px;">Dom</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($calendarData['weeks'] as $week)
+                                            <tr>
+                                                @foreach($week as $dayData)
+                                                    <td style="height: 52px; vertical-align: top; padding: 2px;" class="{{ $dayData && $dayData['has_attended'] ? 'bg-success bg-opacity-15' : '' }}">
+                                                        @if($dayData)
+                                                            <div class="d-flex justify-content-between align-items-center">
+                                                                <span class="small fw-bold {{ $dayData['has_attended'] ? 'text-success' : 'text-secondary' }}" style="font-size: 10px;">
+                                                                    {{ $dayData['day'] }}
+                                                                </span>
+                                                                @if($dayData['has_attended'])
+                                                                    <i data-lucide="check" class="text-success" style="width: 10px; height: 10px;"></i>
+                                                                @endif
+                                                            </div>
+                                                            @if($dayData['has_attended'])
+                                                                <span class="badge bg-success text-white px-1 py-0 mt-1 d-block" style="font-size: 8px;">
+                                                                    {{ $dayData['short_time'] }}
+                                                                </span>
+                                                            @endif
+                                                        @endif
+                                                    </td>
+                                                @endforeach
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Historial de Asistencias del Alumno -->
+                        <div class="glass-card p-4">
+                            <h5 class="text-white mb-3 font-heading">Historial Reciente de Asistencias</h5>
+                            <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
+                                <table class="table table-dark table-hover mb-0 align-middle">
+                                    <thead>
+                                        <tr class="text-secondary small">
+                                            <th>Fecha</th>
+                                            <th>Hora Exacta</th>
+                                            <th>Registrado Por</th>
+                                            <th>Notas</th>
+                                            <th class="text-end">Acción</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @forelse($studentAttendances as $att)
+                                            <tr class="small">
+                                                <td class="text-white fw-bold">{{ $att->checked_in_at->translatedFormat('d/m/Y') }}</td>
+                                                <td>
+                                                    <span class="badge bg-success bg-opacity-20 text-success font-monospace">
+                                                        {{ $att->checked_in_at->format('H:i:s') }}
+                                                    </span>
+                                                </td>
+                                                <td class="text-secondary small">{{ $att->recorder?->name ?? 'Entrenador' }}</td>
+                                                <td class="text-secondary small">{{ $att->notes ?? '-' }}</td>
+                                                <td class="text-end">
+                                                    <form action="{{ route('trainer.attendances.destroy', $att) }}" method="POST" class="d-inline" onsubmit="return confirm('¿Anular esta asistencia?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger border-0 p-1 text-danger">
+                                                            <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        @empty
+                                            <tr>
+                                                <td colspan="5" class="text-center py-4 text-secondary">Aún no registra asistencias.</td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
